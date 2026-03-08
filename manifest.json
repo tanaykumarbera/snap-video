@@ -1,0 +1,41 @@
+{
+    "name": "SnapVideo",
+    "short_name": "SnapVideo",
+    "description": "Timestamp bookmark video player — snap moments, name them, jump back instantly.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#7c5cfc",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "file_handlers": [
+        {
+            "action": "/",
+            "accept": {
+                "video/mp4": [
+                    ".mp4"
+                ],
+                "video/quicktime": [
+                    ".mov"
+                ],
+                "video/webm": [
+                    ".webm"
+                ]
+            }
+        }
+    ]
+}

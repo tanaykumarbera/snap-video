@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapVideo — Timestamp Bookmark Player</title>
+  <meta name="description"
+    content="A minimalistic video player with timestamp bookmarking. Snap moments, name them, jump back instantly.">
+  <meta name="theme-color" content="#7c5cfc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- ═══ VIDEO LAYER (always fullscreen) ═══ -->
+  <video id="video" playsinline></video>
+
+  <!-- ═══ DROP ZONE (shown when no video loaded) ═══ -->
+  <div id="dropZone" class="drop-zone">
+    <div class="drop-zone__content">
+      <div class="drop-zone__icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="23 7 16 12 23 17 23 7" />
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+        </svg>
+      </div>
+      <h2 class="drop-zone__title">Drop a video here</h2>
+      <p class="drop-zone__subtitle">or click to open a file</p>
+      <p class="drop-zone__formats">Supports MP4, MOV</p>
+    </div>
+  </div>
+
+  <!-- ═══ TINT OVERLAY (dark overlay when controls visible) ═══ -->
+  <div id="tintOverlay" class="tint-overlay"></div>
+
+  <!-- ═══ TOP BAR ═══ -->
+  <header id="topBar" class="top-bar">
+    <div class="top-bar__brand">
+      <svg class="top-bar__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7" />
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+      </svg>
+      <span class="top-bar__name">Snap<span class="top-bar__name--accent">Video</span></span>
+    </div>
+    <button id="openFileBtn" class="btn btn--ghost">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+      </svg>
+      Open File
+    </button>
+  </header>
+
+  <!-- ═══ LEFT SNAP PANEL ═══ -->
+  <aside id="snapPanel" class="snap-panel">
+    <div class="snap-panel__header">
+      <div class="snap-panel__header-top">
+        <h3 class="snap-panel__title">Snaps</h3>
+        <span id="snapCount" class="snap-panel__count">0</span>
+      </div>
+      <button id="setFolderBtn" class="btn btn--tiny btn--ghost" title="Set snap storage folder">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+        </svg>
+        <span id="folderStatus">Set Folder</span>
+      </button>
+    </div>
+    <div id="snapList" class="snap-panel__list">
+      <div class="snap-panel__empty">
+        <p>No snaps yet</p>
+        <p class="snap-panel__empty-hint">Click 📸 to bookmark a moment</p>
+      </div>
+    </div>
+    <div class="snap-panel__footer">
+      <span class="snap-panel__toggle-label">Autoplay on Jump</span>
+      <label class="toggle" id="autoplayToggle">
+        <input type="checkbox" id="autoplayCheckbox" checked>
+        <span class="toggle__slider"></span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- ═══ LEFT EDGE HOVER ZONE (invisible trigger) ═══ -->
+  <div id="leftEdge" class="left-edge-trigger"></div>
+
+  <!-- ═══ BOTTOM EDGE HOVER ZONE (invisible trigger) ═══ -->
+  <div id="bottomEdge" class="bottom-edge-trigger"></div>
+
+  <!-- ═══ BOTTOM CONTROLS ═══ -->
+  <div id="bottomControls" class="bottom-controls">
+    <!-- Seek bar -->
+    <div class="seek-bar-container">
+      <div id="seekBarTrack" class="seek-bar__track">
+        <div id="seekBarBuffered" class="seek-bar__buffered"></div>
+        <div id="seekBarFill" class="seek-bar__fill"></div>
+        <div id="seekBarThumb" class="seek-bar__thumb"></div>
+      </div>
+      <div id="seekTooltip" class="seek-bar__tooltip">0:00</div>
+    </div>
+
+    <!-- Controls row -->
+    <div class="controls-row">
+      <!-- Left: time -->
+      <div class="controls-row__left">
+        <span id="timeDisplay" class="time-display">0:00 / 0:00</span>
+      </div>
+
+      <!-- Center: playback -->
+      <div class="controls-row__center">
+        <button id="skipBackBtn" class="btn btn--control" title="Back 10s">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+          <span class="btn__label">10</span>
+        </button>
+        <button id="playPauseBtn" class="btn btn--play" title="Play / Pause">
+          <svg id="playIcon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          <svg id="pauseIcon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+            <rect x="6" y="4" width="4" height="16" />
+            <rect x="14" y="4" width="4" height="16" />
+          </svg>
+        </button>
+        <button id="skipForwardBtn" class="btn btn--control" title="Forward 10s">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10" />
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+          </svg>
+          <span class="btn__label">10</span>
+        </button>
+      </div>
+
+      <!-- Right: snap + speed -->
+      <div class="controls-row__right">
+        <button id="snapBtn" class="btn btn--snap" title="Snap this moment">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+          <span>Snap</span>
+        </button>
+        <div id="speedSelector" class="speed-selector">
+          <button id="speedBtn" class="btn btn--speed" title="Playback speed">1x</button>
+          <div id="speedMenu" class="speed-selector__menu">
+            <button data-speed="0.5">0.5×</button>
+            <button data-speed="1" class="active">1×</button>
+            <button data-speed="1.5">1.5×</button>
+            <button data-speed="2">2×</button>
+            <button data-speed="3">3×</button>
+          </div>
+        </div>
+        <button id="fullscreenBtn" class="btn btn--control" title="Toggle fullscreen">
+          <svg id="fsExpandIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9" />
+            <polyline points="9 21 3 21 3 15" />
+            <line x1="21" y1="3" x2="14" y2="10" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+          <svg id="fsCompressIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <polyline points="4 14 10 14 10 20" />
+            <polyline points="20 10 14 10 14 4" />
+            <line x1="14" y1="10" x2="21" y2="3" />
+            <line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SNAP MODAL ═══ -->
+  <div id="snapModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal__header">
+        <h3 class="modal__title">Snap this moment</h3>
+        <span id="modalTimestamp" class="modal__timestamp">0:00</span>
+      </div>
+      <input id="snapNameInput" class="modal__input" type="text" placeholder="Name this moment..." maxlength="80"
+        autocomplete="off">
+      <div class="modal__actions">
+        <button id="modalCancelBtn" class="btn btn--ghost">Cancel</button>
+        <button id="modalSnapBtn" class="btn btn--accent">
+          Snap It
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="fileInput" accept="video/mp4,video/quicktime,.mp4,.mov" hidden>
+
+  <div id="playbackStatus" class="playback-status"></div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('Service Worker registered:', reg))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+  </script>
+</body>
+
+</html>
