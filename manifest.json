@@ -2,7 +2,7 @@
     "name": "SnapVideo",
     "short_name": "SnapVideo",
     "description": "Timestamp bookmark video player — snap moments, name them, jump back instantly.",
-    "start_url": "/",
+    "start_url": "/app/",
     "scope": "/",
     "display": "standalone",
     "background_color": "#000000",

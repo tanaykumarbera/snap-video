@@ -8,6 +8,8 @@ const CACHE_NAME = 'snapvideo-v7';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
+    '/app/',
+    '/app/index.html',
     '/styles.css',
     '/app.js',
     '/manifest.json',

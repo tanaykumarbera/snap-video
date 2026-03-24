@@ -15,7 +15,7 @@ SnapVideo is a minimalistic video player that allows you to bookmark timestamps 
 
 ## How to Use
 
-1. **Load a Video**: Open the application (`index.html` or `landing.html`) and drag and drop an `.mp4` or `.mov` file onto the browser window. Alternatively, click "Open File" in the top bar.
+1. **Load a Video**: Navigate to `/app` (the application view) and drag and drop an `.mp4` or `.mov` file onto the browser window. Alternatively, click "Open File" in the top bar.
 2. **Snap a Moment**: Once the video is playing, click the "Snap" button on the bottom right (or look for the `📸` icon) to bookmark the current timestamp. Name it so you can remember it!
 3. **Jump Back**: Hover over the left side of the screen to reveal the "Snaps" panel. Click any saved snap to instantly seek to that point. 
 4. **Persistent Storage (Optional)**: If you want your snaps to remain saved across sessions, click the `Set Folder` button on the "Snaps" panel and select a local folder on your machine. All snap info will be persisted inside a `.snapinfo` file there.
