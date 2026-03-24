@@ -1,5 +1,10 @@
 # SnapVideo
 
+[![Deploy static content to Pages](https://github.com/tanaykumarbera/snap-video/actions/workflows/pages.yml/badge.svg)](https://github.com/tanaykumarbera/snap-video/actions/workflows/pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+**[Visit the Website](https://tanaykumarbera.github.io/snap-video/)** • **[Launch Web App 🚀](https://tanaykumarbera.github.io/snap-video/app/)**
+
 SnapVideo is a minimalistic video player that allows you to bookmark timestamps ("snaps") and jump back to them instantly. Built purely on modern web technologies, it features an elegant dark theme, robust offline support, and file system persistence.
 
 ![SnapVideo Landing](screenshots/landing.png)
@@ -15,7 +20,7 @@ SnapVideo is a minimalistic video player that allows you to bookmark timestamps 
 
 ## How to Use
 
-1. **Load a Video**: Open the application (`index.html` or `landing.html`) and drag and drop an `.mp4` or `.mov` file onto the browser window. Alternatively, click "Open File" in the top bar.
+1. **Load a Video**: Navigate to `/app` (the application view) and drag and drop an `.mp4` or `.mov` file onto the browser window. Alternatively, click "Open File" in the top bar.
 2. **Snap a Moment**: Once the video is playing, click the "Snap" button on the bottom right (or look for the `📸` icon) to bookmark the current timestamp. Name it so you can remember it!
 3. **Jump Back**: Hover over the left side of the screen to reveal the "Snaps" panel. Click any saved snap to instantly seek to that point. 
 4. **Persistent Storage (Optional)**: If you want your snaps to remain saved across sessions, click the `Set Folder` button on the "Snaps" panel and select a local folder on your machine. All snap info will be persisted inside a `.snapinfo` file there.
