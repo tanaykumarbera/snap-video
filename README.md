@@ -1,5 +1,10 @@
 # SnapVideo
 
+[![Deploy static content to Pages](https://github.com/tanaykumarbera/snap-video/actions/workflows/pages.yml/badge.svg)](https://github.com/tanaykumarbera/snap-video/actions/workflows/pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+**[Visit the Website](https://tanaykumarbera.github.io/snap-video/)** • **[Launch Web App 🚀](https://tanaykumarbera.github.io/snap-video/app/)**
+
 SnapVideo is a minimalistic video player that allows you to bookmark timestamps ("snaps") and jump back to them instantly. Built purely on modern web technologies, it features an elegant dark theme, robust offline support, and file system persistence.
 
 ![SnapVideo Landing](screenshots/landing.png)
